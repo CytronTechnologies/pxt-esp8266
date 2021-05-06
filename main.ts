@@ -1,6 +1,10 @@
-/**
+/*******************************************************************************
  * MakeCode extension for ESP8266 Wifi module.
- */
+ *
+ * Company: Cytron Technologies Sdn Bhd
+ * Website: http://www.cytron.io
+ * Email:   support@cytron.io
+ *******************************************************************************/
 
 /**
  * Blocks for ESP8266 WiFi module.
@@ -8,13 +12,23 @@
 //% weight=10 color=#ff8000 icon="\uf085" block="ESP8266 WiFi"
 namespace esp8266 {
     // Flag to indicate whether the ESP8266 was initialized successfully.
-    let initialized = false
+    let esp8266Initialized = false
 
 
 
-    // Send AT command and wait for response.
-    // Return true if expected command is received, false otherwise.
-    function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
+    /**
+     * Send AT command and wait for response.
+     * Return true if expected response is received.
+     * @param command The AT command without the CRLF.
+     * @param expected_response Wait for this response.
+     * @param timeout Timeout in milliseconds.
+     */
+    //% blockHidden=true
+    //% blockId=esp8266_send_command
+    export function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
+        // Wait a while from previous command.
+        basic.pause(50)
+
         // Flush the Rx buffer.
         serial.readString()
 
@@ -51,15 +65,20 @@ namespace esp8266 {
             }
         }
 
-        basic.pause(100)
         return result
     }
 
 
 
-    // Get the response from ESP8266.
-    // Return the line start with the expected response.
-    function getResponse(expected_response: string, timeout: number = 100): string {
+    /**
+     * Get the specific response from ESP8266.
+     * Return the line start with the specific response.
+     * @param command The specific response we want to get.
+     * @param timeout Timeout in milliseconds.
+     */
+    //% blockHidden=true
+    //% blockId=esp8266_get_response
+    export function getResponse(response: string, timeout: number = 100): string {
         let rxData = ""
         let timestamp = input.runningTime()
         while (true) {
@@ -73,8 +92,8 @@ namespace esp8266 {
             rxData += serial.readString()
             if (rxData.includes("\r\n")) {
                 // Check if expected response received.
-                if (rxData.slice(0, rxData.indexOf("\r\n")).includes(expected_response)) {
-                    rxData = rxData.slice(rxData.indexOf(expected_response), rxData.indexOf("\r\n"))
+                if (rxData.slice(0, rxData.indexOf("\r\n")).includes(response)) {
+                    rxData = rxData.slice(rxData.indexOf(response), rxData.indexOf("\r\n"))
                     break
                 }
 
@@ -91,13 +110,12 @@ namespace esp8266 {
     /**
      * Return true if the ESP8266 is already initialized.
      */
-    //% subcategory="WiFi"
-    //% weight=20
+    //% weight=50
     //% blockGap=8
     //% blockId=esp8266_is_esp8266_initialized
     //% block="ESP8266 initialized"
     export function isESP8266Initialized(): boolean {
-        return initialized
+        return esp8266Initialized
     }
 
 
@@ -108,8 +126,7 @@ namespace esp8266 {
      * @param rx Rx pin of micro:bit. eg: SerialPin.P15
      * @param baudrate UART baudrate. eg: BaudRate.BaudRate115200
      */
-    //% subcategory="WiFi"
-    //% weight=19
+    //% weight=49
     //% blockGap=40
     //% blockId=esp8266_init
     //% block="initialize ESP8266: Tx %tx Rx %rx Baudrate %baudrate"
@@ -118,7 +135,7 @@ namespace esp8266 {
         serial.redirect(tx, rx, baudrate)
 
         // Restore the ESP8266 factory settings.
-        initialized = sendCommand("AT+RESTORE", "ready", 1000)
+        esp8266Initialized = sendCommand("AT+RESTORE", "ready", 1000)
     }
 
 
@@ -126,8 +143,7 @@ namespace esp8266 {
     /**
      * Return true if the ESP8266 is connected to WiFi router.
      */
-    //% subcategory="WiFi"
-    //% weight=18
+    //% weight=48
     //% blockGap=8
     //% blockId=esp8266_is_wifi_connected
     //% block="WiFi connected"
@@ -135,6 +151,9 @@ namespace esp8266 {
         // Get the connection status.
         sendCommand("AT+CIPSTATUS")
         let status = getResponse("STATUS:")
+
+        // Wait until OK is received.
+        getResponse("OK")
 
         // Return the WiFi status.
         if ((status == "") || status.includes("STATUS:5")) {
@@ -152,8 +171,7 @@ namespace esp8266 {
      * @param ssid Your WiFi SSID.
      * @param password Your WiFi password.
      */
-    //% subcategory="WiFi"
-    //% weight=17
+    //% weight=47
     //% blockGap=8
     //% blockId=esp8266_connect_wifi
     //% block="connect to WiFi: SSID %ssid Password %password"

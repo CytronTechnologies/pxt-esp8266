@@ -10,7 +10,8 @@
     },
     "files": [
         "main.ts",
-        "README.md"
+        "README.md",
+        "thingspeak.ts"
     ],
     "testFiles": [
         "test.ts"
