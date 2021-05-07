@@ -6,7 +6,7 @@
  * Email:   support@cytron.io
  *******************************************************************************/
 
- // ThingSpeak API url.
+// ThingSpeak API url.
 const THINGSPEAK_API_URL = "api.thingspeak.com"
 
 namespace esp8266 {

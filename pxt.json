@@ -11,7 +11,8 @@
     "files": [
         "main.ts",
         "README.md",
-        "thingspeak.ts"
+        "thingspeak.ts",
+        "sntp.ts"
     ],
     "testFiles": [
         "test.ts"
