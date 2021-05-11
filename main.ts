@@ -14,6 +14,9 @@ namespace esp8266 {
     // Flag to indicate whether the ESP8266 was initialized successfully.
     let esp8266Initialized = false
 
+    // Buffer for data received from UART.
+    let rxData = ""
+
 
 
     /**
@@ -27,10 +30,11 @@ namespace esp8266 {
     //% blockId=esp8266_send_command
     export function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
         // Wait a while from previous command.
-        basic.pause(50)
+        basic.pause(100)
 
         // Flush the Rx buffer.
         serial.readString()
+        rxData = ""
 
         // Send the command and end with "\r\n".
         serial.writeString(command + "\r\n")
@@ -41,7 +45,6 @@ namespace esp8266 {
         }
         
         // Wait and verify the response.
-        let rxData = ""
         let result = false
         let timestamp = input.runningTime()
         while (true) {
@@ -79,12 +82,11 @@ namespace esp8266 {
     //% blockHidden=true
     //% blockId=esp8266_get_response
     export function getResponse(response: string, timeout: number = 100): string {
-        let rxData = ""
+        let responseLine = ""
         let timestamp = input.runningTime()
         while (true) {
             // Timeout.
             if (input.runningTime() - timestamp > timeout) {
-                rxData = ""
                 break
             }
 
@@ -93,7 +95,10 @@ namespace esp8266 {
             if (rxData.includes("\r\n")) {
                 // Check if expected response received.
                 if (rxData.slice(0, rxData.indexOf("\r\n")).includes(response)) {
-                    rxData = rxData.slice(rxData.indexOf(response), rxData.indexOf("\r\n"))
+                    responseLine = rxData.slice(rxData.indexOf(response), rxData.indexOf("\r\n"))
+
+                    // Trim the Rx data for next call.
+                    rxData = rxData.slice(rxData.indexOf("\r\n") + 2)
                     break
                 }
 
@@ -102,7 +107,7 @@ namespace esp8266 {
             }
         }
 
-        return rxData
+        return responseLine
     }
 
 
@@ -133,6 +138,8 @@ namespace esp8266 {
     export function init(tx: SerialPin, rx: SerialPin, baudrate: BaudRate) {
         // Redirect the serial port.
         serial.redirect(tx, rx, baudrate)
+        serial.setTxBufferSize(128)
+        serial.setRxBufferSize(128)
 
         // Restore the ESP8266 factory settings.
         esp8266Initialized = sendCommand("AT+RESTORE", "ready", 1000)
@@ -150,7 +157,7 @@ namespace esp8266 {
     export function isWifiConnected(): boolean {
         // Get the connection status.
         sendCommand("AT+CIPSTATUS")
-        let status = getResponse("STATUS:")
+        let status = getResponse("STATUS:", 1000)
 
         // Wait until OK is received.
         getResponse("OK")
