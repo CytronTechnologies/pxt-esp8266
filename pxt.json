@@ -9,9 +9,10 @@
         "microphone": "*"
     },
     "files": [
-        "main.ts",
         "README.md",
+        "main.ts",
         "thingspeak.ts",
+        "telegram.ts",
         "sntp.ts"
     ],
     "testFiles": [

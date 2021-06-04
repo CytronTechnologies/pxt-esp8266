@@ -115,7 +115,7 @@ namespace esp8266 {
     /**
      * Return true if the ESP8266 is already initialized.
      */
-    //% weight=50
+    //% weight=30
     //% blockGap=8
     //% blockId=esp8266_is_esp8266_initialized
     //% block="ESP8266 initialized"
@@ -131,7 +131,7 @@ namespace esp8266 {
      * @param rx Rx pin of micro:bit. eg: SerialPin.P15
      * @param baudrate UART baudrate. eg: BaudRate.BaudRate115200
      */
-    //% weight=49
+    //% weight=29
     //% blockGap=40
     //% blockId=esp8266_init
     //% block="initialize ESP8266: Tx %tx Rx %rx Baudrate %baudrate"
@@ -150,7 +150,7 @@ namespace esp8266 {
     /**
      * Return true if the ESP8266 is connected to WiFi router.
      */
-    //% weight=48
+    //% weight=28
     //% blockGap=8
     //% blockId=esp8266_is_wifi_connected
     //% block="WiFi connected"
@@ -178,7 +178,7 @@ namespace esp8266 {
      * @param ssid Your WiFi SSID.
      * @param password Your WiFi password.
      */
-    //% weight=47
+    //% weight=27
     //% blockGap=8
     //% blockId=esp8266_connect_wifi
     //% block="connect to WiFi: SSID %ssid Password %password"

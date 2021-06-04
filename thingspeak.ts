@@ -19,7 +19,7 @@ namespace esp8266 {
      * Return true if data is uploaded to ThingSpeak successfully.
      */
     //% subcategory="ThingSpeak"
-    //% weight=40
+    //% weight=30
     //% blockGap=8
     //% blockId=esp8266_is_thingspeak_data_uploaded
     //% block="ThingSpeak data uploaded"
@@ -31,11 +31,18 @@ namespace esp8266 {
 
     /**
      * Upload data to ThingSpeak
-     * @param ssid Your WiFi SSID.
-     * @param password Your WiFi password.
+     * @param writeApiKey ThingSpeak Write API Key.
+     * @param field1 Data for Field 1.
+     * @param field2 Data for Field 2.
+     * @param field3 Data for Field 3.
+     * @param field4 Data for Field 4.
+     * @param field5 Data for Field 5.
+     * @param field6 Data for Field 6.
+     * @param field7 Data for Field 7.
+     * @param field8 Data for Field 8.
      */
     //% subcategory="ThingSpeak"
-    //% weight=39
+    //% weight=29
     //% blockGap=8
     //% blockId=esp8266_upload_thingspeak
     //% block="Upload data to ThingSpeak|Write API key %writeApiKey|Field 1 %field1||Field 2 %field2|Field 3 %field3|Field 4 %field4|Field 5 %field5|Field 6 %field6|Field 7 %field7|Field 8 %field8"
