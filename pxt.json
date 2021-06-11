@@ -12,6 +12,7 @@
         "README.md",
         "main.ts",
         "thingspeak.ts",
+        "blynk.ts",
         "sntp.ts"
     ],
     "testFiles": [

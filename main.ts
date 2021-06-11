@@ -87,6 +87,10 @@ namespace esp8266 {
         while (true) {
             // Timeout.
             if (input.runningTime() - timestamp > timeout) {
+                // Check if expected response received in case no CRLF received.
+                if (rxData.includes(response)) {
+                    responseLine = rxData
+                }
                 break
             }
 
@@ -95,7 +99,7 @@ namespace esp8266 {
             if (rxData.includes("\r\n")) {
                 // Check if expected response received.
                 if (rxData.slice(0, rxData.indexOf("\r\n")).includes(response)) {
-                    responseLine = rxData.slice(rxData.indexOf(response), rxData.indexOf("\r\n"))
+                    responseLine = rxData.slice(0, rxData.indexOf("\r\n"))
 
                     // Trim the Rx data for next call.
                     rxData = rxData.slice(rxData.indexOf("\r\n") + 2)
