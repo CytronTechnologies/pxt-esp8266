@@ -13,7 +13,7 @@ Initialize the ESP8266 module (Tx = P16, Rx = P15, Baudrate = 115200).
 esp8266.init(SerialPin.P16, SerialPin.P15, BaudRate.BaudRate115200)
 ```
 
-Show happy face if successful.
+Show happy face if successful.<br>
 Show sad face if failed.
 
 ```blocks
@@ -32,7 +32,7 @@ Connect to WiFi router.
 esp8266.connectWiFi("my_ssid", "my_password")
 ```
 
-Show happy face if connected successfully.
+Show happy face if connected successfully.<br>
 Show sad face if failed.
 
 ```blocks
@@ -51,7 +51,7 @@ Upload data to Thingspeak (Data can only be uploaded every 15 seconds).
 esp8266.uploadThingspeak("my_write_api_key", 0, 1, 2, 3, 4, 5, 6, 7)
 ```
 
-Show happy face if data is uploaded successfully.
+Show happy face if data is uploaded successfully.<br>
 Show sad face if failed.
 
 ```blocks
@@ -76,7 +76,7 @@ Write to Blynk.
 esp8266.writeBlynk("my_blynk_token", "V1", "100")
 ```
 
-Show happy face if Blynk was read/written successfully.
+Show happy face if Blynk was read/written successfully.<br>
 Show sad face if failed.
 
 ```blocks
@@ -89,7 +89,7 @@ if (esp8266.isBlynkUpdated()) {
 
 ## Internet Time
 
-Initialize internet time to timezone +8.
+Initialize internet time to timezone +8.<br>
 Show sad face if failed.
 
 ```blocks
@@ -99,7 +99,7 @@ if (!(esp8266.isInternetTimeInitialized())) {
 }
 ```
 
-Update the internet time and show the time.
+Update the internet time and show the time.<br>
 Show sad face if failed.
 
 ```blocks
@@ -107,7 +107,7 @@ esp8266.updateInternetTime()
 if (!(esp8266.isInternetTimeUpdated())) {
     basic.showIcon(IconNames.Sad)
 } else {
-    basic.showString("" + esp8266.getHour() + ":" + esp8266.getMinute() + ":" + esp8266.getSecond())
+    basic.showString(esp8266.getHour() + ":" + esp8266.getMinute() + ":" + esp8266.getSecond())
 }
 ```
 
