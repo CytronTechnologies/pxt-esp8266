@@ -30,7 +30,7 @@ namespace esp8266 {
 
 
     /**
-     * Upload data to ThingSpeak
+     * Upload data to ThingSpeak (Data can only be updated to Thingspeak every 15 seconds).
      * @param writeApiKey ThingSpeak Write API Key.
      * @param field1 Data for Field 1.
      * @param field2 Data for Field 2.
