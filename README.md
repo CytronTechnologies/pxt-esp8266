@@ -1,31 +1,120 @@
+# ESP8266 AT Mode Extension for Microsoft MakeCode
 
-> Open this page at [https://waiweng83.github.io/esp8266/](https://waiweng83.github.io/esp8266/)
+This library provides the driver for [ESP8266 WiFi Grove Module](https://www.cytron.io/p-grv-wifi-8266).
+This extension is only tested with Espressif Non OS AT Firmware v1.7.4.
 
-## Use as Extension
+![ESP8266 WiFi Grove Module](https://raw.githubusercontent.com/CytronTechnologies/pxt-esp8266/master/icon.png)
 
-This repository can be added as an **extension** in MakeCode.
+## Initialization (Selecting UART Pins and Baudrate)
 
-* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-* click on **New Project**
-* click on **Extensions** under the gearwheel menu
-* search for **https://github.com/waiweng83/esp8266** and import
+Initialize the ESP8266 module (Tx = P16, Rx = P15, Baudrate = 115200).
 
-## Edit this project ![Build status badge](https://github.com/waiweng83/esp8266/workflows/MakeCode/badge.svg)
+```blocks
+esp8266.init(SerialPin.P16, SerialPin.P15, BaudRate.BaudRate115200)
+```
 
-To edit this repository in MakeCode.
+Show happy face if successful.
+Show sad face if failed.
 
-* open [https://makecode.microbit.org/](https://makecode.microbit.org/)
-* click on **Import** then click on **Import URL**
-* paste **https://github.com/waiweng83/esp8266** and click import
+```blocks
+if (esp8266.isESP8266Initialized()) {
+    basic.showIcon(IconNames.Happy)
+} else {
+    basic.showIcon(IconNames.Sad)
+}
+```
 
-## Blocks preview
+## WiFi
 
-This image shows the blocks code from the last commit in master.
-This image may take a few minutes to refresh.
+Connect to WiFi router.
 
-![A rendered view of the blocks](https://github.com/waiweng83/esp8266/raw/master/.github/makecode/blocks.png)
+```blocks
+esp8266.connectWiFi("my_ssid", "my_password")
+```
 
-#### Metadata (used for search, rendering)
+Show happy face if connected successfully.
+Show sad face if failed.
+
+```blocks
+if (esp8266.isWifiConnected()) {
+    basic.showIcon(IconNames.Happy)
+} else {
+    basic.showIcon(IconNames.Sad)
+}
+```
+
+## Thingspeak
+
+Upload data to Thingspeak (Data can only be uploaded every 15 seconds).
+
+```blocks
+esp8266.uploadThingspeak("my_write_api_key", 0, 1, 2, 3, 4, 5, 6, 7)
+```
+
+Show happy face if data is uploaded successfully.
+Show sad face if failed.
+
+```blocks
+if (esp8266.isThingspeakUploaded()) {
+    basic.showIcon(IconNames.Happy)
+} else {
+    basic.showIcon(IconNames.Sad)
+}
+```
+
+## Blynk
+
+Read from Blynk.
+
+```blocks
+let value = esp8266.readBlynk("my_blynk_token", "V0")
+```
+
+Write to Blynk.
+
+```blocks
+esp8266.writeBlynk("my_blynk_token", "V1", "100")
+```
+
+Show happy face if Blynk was read/written successfully.
+Show sad face if failed.
+
+```blocks
+if (esp8266.isBlynkUpdated()) {
+    basic.showIcon(IconNames.Happy)
+} else {
+    basic.showIcon(IconNames.Sad)
+}
+```
+
+## Internet Time
+
+Initialize internet time to timezone +8.
+Show sad face if failed.
+
+```blocks
+esp8266.initInternetTime(8)
+if (!(esp8266.isInternetTimeInitialized())) {
+    basic.showIcon(IconNames.Sad)
+}
+```
+
+Update the internet time and show the time.
+Show sad face if failed.
+
+```blocks
+esp8266.updateInternetTime()
+if (!(esp8266.isInternetTimeUpdated())) {
+    basic.showIcon(IconNames.Sad)
+} else {
+    basic.showString("" + esp8266.getHour() + ":" + esp8266.getMinute() + ":" + esp8266.getSecond())
+}
+```
+
+## License
+
+MIT
+
+## Supported targets
 
 * for PXT/microbit
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
