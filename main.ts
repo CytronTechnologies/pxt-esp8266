@@ -146,7 +146,7 @@ namespace esp8266 {
         serial.setRxBufferSize(128)
 
         // Restore the ESP8266 factory settings.
-        esp8266Initialized = sendCommand("AT+RESTORE", "ready", 1000)
+        esp8266Initialized = sendCommand("AT+RESTORE", "ready", 5000)
     }
 
 
