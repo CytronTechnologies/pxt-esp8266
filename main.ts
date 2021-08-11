@@ -30,7 +30,7 @@ namespace esp8266 {
     //% blockId=esp8266_send_command
     export function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
         // Wait a while from previous command.
-        basic.pause(100)
+        basic.pause(10)
 
         // Flush the Rx buffer.
         serial.readString()
@@ -61,6 +61,14 @@ namespace esp8266 {
                 if (rxData.slice(0, rxData.indexOf("\r\n")).includes(expected_response)) {
                     result = true
                     break
+                }
+
+                // If we expected "OK" but "ERROR" is received, do not wait for timeout.
+                if (expected_response == "OK") {
+                    if (rxData.slice(0, rxData.indexOf("\r\n")).includes("ERROR")) {
+                        result = false
+                        break
+                    }
                 }
 
                 // Trim the Rx data before loop again.
@@ -145,8 +153,18 @@ namespace esp8266 {
         serial.setTxBufferSize(128)
         serial.setRxBufferSize(128)
 
+        // Reset the flag.
+        esp8266Initialized = false
+
         // Restore the ESP8266 factory settings.
-        esp8266Initialized = sendCommand("AT+RESTORE", "ready", 5000)
+        if (sendCommand("AT+RESTORE", "ready", 5000) == false) return
+
+        // Turn off echo.
+        if (sendCommand("ATE0", "OK") == false) return
+
+        // Initialized successfully.
+        // Set the flag.
+        esp8266Initialized = true
     }
 
 
