@@ -1,7 +1,7 @@
 # ESP8266 AT Mode Extension for Microsoft MakeCode
 
 This library provides the driver for [ESP8266 WiFi Grove Module](https://www.cytron.io/p-grv-wifi-8266).
-This extension is only tested with Espressif Non OS AT Firmware v1.7.4.
+This extension is tested with Espressif ESP-AT Firmware v2.2.0.
 
 ![ESP8266 WiFi Grove Module](https://raw.githubusercontent.com/CytronTechnologies/pxt-esp8266/master/icon.png)
 
