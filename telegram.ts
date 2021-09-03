@@ -51,7 +51,7 @@ namespace esp8266 {
         if (sendCommand("AT+CIPSTART=\"SSL\",\"" + TELEGRAM_API_URL + "\",443", "OK", 10000) == false) return
 
         // Construct the data to send.
-        let data = "GET /bot" + apiKey + "/sendMessage?chat_id=" + chatId + "&text=" + message
+        let data = "GET /bot" + formatUrl(apiKey) + "/sendMessage?chat_id=" + formatUrl(chatId) + "&text=" + formatUrl(message)
         data += " HTTP/1.1\r\n"
         data += "Host: " + TELEGRAM_API_URL + "\r\n"
 

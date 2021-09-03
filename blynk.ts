@@ -120,7 +120,7 @@ namespace esp8266 {
         }
 
         // Construct the data to send.
-        let data = "GET /" + authToken + "/update/" + pin + "?value=" + value + " HTTP/1.1\r\n"
+        let data = "GET /" + authToken + "/update/" + pin + "?value=" + formatUrl(value) + " HTTP/1.1\r\n"
 
         // Send the data.
         sendCommand("AT+CIPSEND=" + (data.length + 2))
