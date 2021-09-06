@@ -199,6 +199,9 @@ namespace esp8266 {
             response = response.slice(response.indexOf(":") + 1)
             responseArray = response.split(" ")
 
+            // Remove the preceeding " " for each field.
+            while (responseArray.removeElement(""));
+
             // If the year is still 1970, means it's not updated yet.
             if (responseArray[4] != "1970") {
                 break

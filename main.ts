@@ -253,9 +253,6 @@ namespace esp8266 {
         // Set to station mode.
         sendCommand("AT+CWMODE=1", "OK")
 
-        // Restart.
-        sendCommand("AT+RST", "ready", 1000)
-
         // Connect to WiFi router.
         sendCommand("AT+CWJAP=\"" + ssid + "\",\"" + password + "\"", "OK", 20000)
     }
