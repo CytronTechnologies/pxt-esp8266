@@ -6,12 +6,15 @@
  * Email:   support@cytron.io
  *******************************************************************************/
 
-// Blynk API url.
-const BLYNK_API_URL = "blynk-cloud.com"
+
 
 namespace esp8266 {
     // Flag to indicate whether the blynk data was updated successfully.
     let blynkUpdated = false
+
+    // Blynk servers.
+    let blynkServers = ["blynk.cloud", "fra1.blynk.cloud", "lon1.blynk.cloud",
+                        "ny3.blynk.cloud", "sgp1.blynk.cloud", "blr1.blynk.cloud"]
 
 
 
@@ -48,46 +51,57 @@ namespace esp8266 {
         // Make sure the WiFi is connected.
         if (isWifiConnected() == false) return value
 
-        // Connect to ThingSpeak. Return if failed.
-        if (sendCommand("AT+CIPSTART=\"TCP\",\"" + BLYNK_API_URL + "\",80", "OK", 10000) == false) {
-            // Close the connection and return.
+        // Loop through all the blynk servers.
+        for (let i = 0; i < blynkServers.length; i++) {
+            // Connect to Blynk.
+            if (sendCommand("AT+CIPSTART=\"TCP\",\"" + blynkServers[i] + "\",80", "OK", 5000) == true) {
+
+                // Construct the data to send.
+                // http://blynk.cloud/external/api/get?token={token}&{pin}
+                let data = "GET /external/api/get?token=" + authToken + "&" + pin + " HTTP/1.1\r\n"
+
+                // Send the data.
+                sendCommand("AT+CIPSEND=" + (data.length + 2), "OK")
+                sendCommand(data)
+
+                // Verify if "SEND OK" is received.
+                if (getResponse("SEND OK", 5000) != "") {
+
+                    // Make sure Blynk response is 200.
+                    if (getResponse("HTTP/1.1", 5000).includes("200 OK")) {
+
+                        // Get the pin value.
+                        // It should be the last line in the response.
+                        while (true) {
+                            let response = getResponse("", 200)
+                            if (response == "") {
+                                break
+                            } else {
+                                value = response
+                            }
+                        }
+
+                        // Set the upload successful flag.
+                        blynkUpdated = true
+                    }
+                }
+            }
+
+            // Close the connection.
             sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return value
+
+            // If blynk is updated successfully.
+            if (blynkUpdated == true) {
+                // Rearrange the Blynk servers array to put the correct server at first location.
+                let server = blynkServers[i]
+                blynkServers.splice(i, 1)
+                blynkServers.unshift(server)
+
+                break
+            }
+
         }
 
-        // Construct the data to send.
-        let data = "GET /" + authToken + "/get/" + pin + " HTTP/1.1\r\n"
-
-        // Send the data.
-        sendCommand("AT+CIPSEND=" + (data.length + 2), "OK")
-        sendCommand(data)
-        
-        // Return if "SEND OK" is not received.
-        if (getResponse("SEND OK", 10000) == "") {
-            // Close the connection and return.
-            sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return value
-        }
-
-        // Return if Blynk response is not 200.
-        if (getResponse("HTTP/1.1 200 OK", 10000) == "") {
-            // Close the connection and return.
-            sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return value
-        }
-
-        // Get the pin value.
-        let response = getResponse("[\"", 200)
-        value = response.slice(response.indexOf("[\"") + 2, response.indexOf("\"]"))
-
-        // Close the connection.
-        sendCommand("AT+CIPCLOSE", "OK", 1000)
-
-        // Set the upload successful flag and return.
-        // Make sure the value is not empty.
-        if (value != "") {
-            blynkUpdated = true
-        }
         return value
     }
 
@@ -112,39 +126,57 @@ namespace esp8266 {
         // Make sure the WiFi is connected.
         if (isWifiConnected() == false) return
 
-        // Connect to ThingSpeak. Return if failed.
-        if (sendCommand("AT+CIPSTART=\"TCP\",\"" + BLYNK_API_URL + "\",80", "OK", 10000) == false) {
-            // Close the connection and return.
+        // Loop through all the blynk servers.
+        for (let i = 0; i < blynkServers.length; i++) {
+            // Connect to Blynk.
+            if (sendCommand("AT+CIPSTART=\"TCP\",\"" + blynkServers[i] + "\",80", "OK", 5000) == true) {
+
+                // Construct the data to send.
+                // http://blynk.cloud/external/api/update?token={token}&{pin}={value}
+                let data = "GET /external/api/update?token=" + authToken + "&" + pin + "=" + formatUrl(value) + " HTTP/1.1\r\n"
+
+                // Send the data.
+                sendCommand("AT+CIPSEND=" + (data.length + 2), "OK")
+                sendCommand(data)
+
+                // Verify if "SEND OK" is received.
+                if (getResponse("SEND OK", 5000) != "") {
+
+                    // Make sure Blynk response is 200.
+                    if (getResponse("HTTP/1.1", 5000).includes("200 OK")) {
+
+                        // Get the pin value.
+                        // It should be the last line in the response.
+                        while (true) {
+                            let response = getResponse("", 200)
+                            if (response == "") {
+                                break
+                            } else {
+                                value = response
+                            }
+                        }
+
+                        // Set the upload successful flag.
+                        blynkUpdated = true
+                    }
+                }
+            }
+
+            // Close the connection.
             sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return
+
+            // If blynk is updated successfully.
+            if (blynkUpdated == true) {
+                // Rearrange the Blynk servers array to put the correct server at first location.
+                let server = blynkServers[i]
+                blynkServers.splice(i, 1)
+                blynkServers.unshift(server)
+
+                break
+            }
+
         }
 
-        // Construct the data to send.
-        let data = "GET /" + authToken + "/update/" + pin + "?value=" + formatUrl(value) + " HTTP/1.1\r\n"
-
-        // Send the data.
-        sendCommand("AT+CIPSEND=" + (data.length + 2))
-        sendCommand(data)
-        
-        // Return if "SEND OK" is not received.
-        if (getResponse("SEND OK", 10000) == "") {
-            // Close the connection and return.
-            sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return
-        }
-
-        // Return if Blynk response is not 200.
-        if (getResponse("HTTP/1.1 200 OK", 10000) == "") {
-            // Close the connection and return.
-            sendCommand("AT+CIPCLOSE", "OK", 1000)
-            return
-        }
-
-        // Close the connection.
-        sendCommand("AT+CIPCLOSE", "OK", 1000)
-
-        // Set the upload successful flag and return.
-        blynkUpdated = true
         return
     }
 }
