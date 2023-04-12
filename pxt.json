@@ -1,6 +1,6 @@
 {
     "name": "pxt-esp8266",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "MakeCode Package for ESP8266 WiFi Module",
     "license": "MIT",
     "dependencies": {
